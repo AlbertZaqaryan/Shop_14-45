@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import HomeLogo, HomeCarusel, Category, SubCategory
+from .models import HomeLogo, HomeCarusel, Category, SubCategory,  Product
 
 def all_for_site():
     one_logo = HomeLogo.objects.all().first()
@@ -10,12 +10,36 @@ def index(request):
     active_carusel = HomeCarusel.objects.all().first()
     carusel_list = HomeCarusel.objects.all()[1:]
     category_list = Category.objects.filter()
+    product_list = Product.objects.all()
+    sub_category = SubCategory.objects.all()
     return render(request, 'main/index.html', context={
         'one_logo':all_for_site(),
         'action':'index',
         'active_carusel':active_carusel,
         'carusel_list':carusel_list,
-        'category_list':category_list
+        'category_list':category_list,
+        'product_list':product_list,
+        'sub_category':sub_category
+
+
+    })
+
+
+def index_filter(request, id):
+    active_carusel = HomeCarusel.objects.all().first()
+    carusel_list = HomeCarusel.objects.all()[1:]
+    category_list = Category.objects.filter()
+    product_list = SubCategory.objects.filter(pk=id)
+    sub_category = SubCategory.objects.all()
+    return render(request, 'main/index_filter.html', context={
+        'one_logo':all_for_site(),
+        'action':'index',
+        'active_carusel':active_carusel,
+        'carusel_list':carusel_list,
+        'category_list':category_list,
+        'product_list':product_list,
+        'sub_category':sub_category
+
     })
 
 def blog_single(request):

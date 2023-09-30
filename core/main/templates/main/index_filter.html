@@ -92,7 +92,6 @@
 							{% endfor %}
 							
 						</div><!--/category-products-->
-					
 						<div class="brands_products"><!--brands_products-->
 
 							<h2>Brands</h2>
@@ -124,7 +123,8 @@
 				<div class="col-sm-9 padding-right">
 					<div class="features_items"><!--features_items-->
 						<h2 class="title text-center">Features Items</h2>
-						{%for i in product_list%}
+						{%for j in product_list%}
+							{% for i in j.sub_prod.all %}
 						<div class="col-sm-4">
 							<div class="product-image-wrapper">
 								<div class="single-products">
@@ -161,10 +161,8 @@
 								</div>
 							</div>
 						</div>
-						{%endfor%}
-
-
-						
+						{%endfor%}						
+						{%endfor%}						
 						
 					</div><!--features_items-->
 					

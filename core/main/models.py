@@ -43,3 +43,18 @@ class SubCategory(models.Model):
         verbose_name = 'SubCategory'
         verbose_name_plural = 'SubCategories'
 
+
+
+class Product(models.Model):
+    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='sub_prod')
+    sale = models.BooleanField('Product sale')
+    new = models.BooleanField('New product')
+
+    name = models.CharField('Product name', max_length=30)
+    img = models.ImageField('Image')
+    sale_logo = models.ImageField('Sale logo')
+    new_logo = models.ImageField('new logo')
+    price = models.PositiveIntegerField('Price')
+
+    def __str__(self):
+        return self.name
