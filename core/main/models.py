@@ -55,6 +55,34 @@ class Product(models.Model):
     sale_logo = models.ImageField('Sale logo')
     new_logo = models.ImageField('new logo')
     price = models.PositiveIntegerField('Price')
+    date = models.DateTimeField('Product add date', auto_now=True)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['-date']
+
+
+class Filter(models.Model):
+    name = models.CharField('Filter name', max_length=60)
+
+    def __str__(self):
+        return self.name
+
+class Filter_product(models.Model):
+    
+    category = models.ForeignKey(Filter, on_delete=models.CASCADE, related_name='filter_prod')
+    name = models.CharField('Filter product name', max_length=70)
+    price = models.PositiveIntegerField('Filter product price')
+    img = models.ImageField('Filter product image', upload_to='images')
+
+    def __str__(self):
+        return self.name
+
+
+class Card(models.Model):
+
+    prod = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    

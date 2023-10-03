@@ -1,5 +1,12 @@
-from django.shortcuts import render
-from .models import HomeLogo, HomeCarusel, Category, SubCategory,  Product
+from django.shortcuts import render, redirect
+from .models import (HomeLogo, HomeCarusel, 
+                    Category, SubCategory,  Product,
+                    Filter, Filter_product, Card)
+from .forms import NewUserForm
+from django.contrib import messages
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
+
 
 def all_for_site():
     one_logo = HomeLogo.objects.all().first()
@@ -12,6 +19,8 @@ def index(request):
     category_list = Category.objects.filter()
     product_list = Product.objects.all()
     sub_category = SubCategory.objects.all()
+    filter_list = Filter.objects.all()
+    filter_products = Filter.objects.filter()
     return render(request, 'main/index.html', context={
         'one_logo':all_for_site(),
         'action':'index',
@@ -19,7 +28,9 @@ def index(request):
         'carusel_list':carusel_list,
         'category_list':category_list,
         'product_list':product_list,
-        'sub_category':sub_category
+        'sub_category':sub_category,
+        'filter_list':filter_list,
+        'filter_products':filter_products
 
 
     })
@@ -57,11 +68,27 @@ def blog(request):
     })
 
 def cart(request):
+    card_list = Card.objects.all()
     return render(request, 'main/cart.html', context={
         'one_logo':all_for_site(),
-        'action':'cart'
+        'action':'cart',
+        'card_list':card_list
 
     })
+
+def add_to_cart(request):
+    if request.method == "POST":
+        item = request.POST.get('item')
+        one_prod = Product.objects.get(id=item)
+        Card.objects.create(prod=one_prod)
+        return redirect('index')
+
+
+def delete_to_cart(request):
+    if request.method == "POST":
+        item = request.POST.get('item')
+        Card.objects.filter(id=item).delete()
+        return redirect('cart')
 
 def checkout(request):
     return render(request, 'main/checkout.html', context={
@@ -77,12 +104,40 @@ def contact_us(request):
 
     })
 
-def login(request):
-    return render(request, 'main/login.html', context={
-        'one_logo':all_for_site(),
-        'action':'login'
+def register_request(request):
+	if request.method == "POST":
+		form = NewUserForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			login(request, user)
+			messages.success(request, "Registration successful." )
+			return redirect("index")
+		messages.error(request, "Unsuccessful registration. Invalid information.")
+	form = NewUserForm()
+	return render(request=request, template_name="main/register.html", context={"register_form":form})
 
-    })
+def login_request(request):
+	if request.method == "POST":
+		form = AuthenticationForm(request, data=request.POST)
+		if form.is_valid():
+			username = form.cleaned_data.get('username')
+			password = form.cleaned_data.get('password')
+			user = authenticate(username=username, password=password)
+			if user is not None:
+				login(request, user)
+				messages.info(request, f"You are now logged in as {username}.")
+				return redirect("index")
+			else:
+				messages.error(request,"Invalid username or password.")
+		else:
+			messages.error(request,"Invalid username or password.")
+	form = AuthenticationForm()
+	return render(request=request, template_name="main/login.html", context={"login_form":form})
+
+def logout_request(request):
+	logout(request)
+	messages.info(request, "You have successfully logged out.") 
+	return redirect("index")
 
 def product_details(request):
     return render(request, 'main/product-details.html', context={
