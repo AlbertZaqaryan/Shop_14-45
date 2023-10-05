@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import (HomeLogo, HomeCarusel, 
                     Category, SubCategory,  Product,
-                    Filter, Filter_product, Card)
+                    Filter, Filter_product, Card, Contact)
 from .forms import NewUserForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
@@ -98,6 +98,13 @@ def checkout(request):
     })
 
 def contact_us(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        Contact.objects.create(name=name, email=email, subject=subject, message=message)
+        return redirect('index')
     return render(request, 'main/contact-us.html', context={
         'one_logo':all_for_site(),
         'action':'contact_us'

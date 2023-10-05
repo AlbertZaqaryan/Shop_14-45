@@ -85,4 +85,12 @@ class Card(models.Model):
 
     prod = models.ForeignKey(Product, on_delete=models.CASCADE)
 
-    
+class Contact(models.Model):
+
+    name = models.CharField('Contact name', max_length=60)
+    email = models.EmailField('Contact email')
+    subject = models.TextField('Contact subject')
+    message = models.TextField('Contact message')
+
+    def __str__(self):
+        return self.name
